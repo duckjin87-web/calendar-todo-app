@@ -78,8 +78,8 @@ function daysBetween(a,b){ return Math.round((new Date(b+"T00:00:00")-new Date(a
 function carryInfo(origKey){
   const delay = Math.max(1, daysBetween(origKey, todayKey));
   const label = delay<=1 ? formatMD(origKey) : `${formatMD(origKey)}~${formatMD(addDaysToKey(todayKey,-1))}`;
-  const size = Math.min(8 + 0.5*(delay-1), 11);
-  const weight = Math.min(500 + 150*(delay-1), 900);
+  const size = Math.min(12 + 0.8*(delay-1), 16);
+  const weight = Math.min(600 + 120*(delay-1), 900);
   return { label, size, weight };
 }
 
@@ -92,7 +92,7 @@ function renderModal(){
   const root = document.getElementById('modalRoot');
   if(!modalState){ root.innerHTML=''; return; }
   const { type, key } = modalState;
-  const swatches = PRIORITY_ORDER.map(p=>`<div class="swatch" data-p="${p}" title="${PRIORITY[p].label}" style="background:${PRIORITY[p].color}" onclick="pickPriority('${p}')"></div>`).join('');
+  const swatches = PRIORITY_ORDER.map(p=>`<div class="swatch pc-${p}" data-p="${p}" title="${PRIORITY[p].label}" onclick="pickPriority('${p}')"></div>`).join('');
 
   if(type==='event'){
     const start = nowHM();
@@ -174,7 +174,7 @@ function dayAgendaHtml(d){
 
   const evHtml = evs.length ? evs.map(e => `
     <div class="item-row">
-      <div class="prio-bar" style="background:${PRIORITY[e.priority].color}"></div>
+      <div class="prio-bar pc-${e.priority}"></div>
       <div class="checkbox ${e.done?'checked':''}" onclick="toggleEventDone('${e._key}',${e._idx})">${e.done?'✓':''}</div>
       <div class="item-time">${e.start}\n~${e.end}</div>
       <div class="title-wrap">
@@ -186,7 +186,7 @@ function dayAgendaHtml(d){
 
   const todoHtml = todos.length ? todos.map(t => `
     <div class="item-row">
-      <div class="prio-bar" style="background:${PRIORITY[t.priority].color}"></div>
+      <div class="prio-bar pc-${t.priority}"></div>
       <div class="checkbox ${t.done?'checked':''}" onclick="toggleTodo('${t._key}',${t._idx})">${t.done?'✓':''}</div>
       <div class="item-time todo-time">${t.dueTime||''}</div>
       <div class="title-wrap">
@@ -226,11 +226,11 @@ function renderWeek(){
     const todos = TODOS[key]||[];
     const isToday = key===todayKey;
     const chips = [
-      ...evs.map((e,idx)=>`<div class="week-chip" data-type="event" data-key="${key}" data-idx="${idx}" style="background:${PRIORITY[e.priority].color}">
-          <span class="wc-title ${e.done?'done':''}">${e.start} ${e.title}</span></div>`),
-      ...todos.map((t,idx)=>`<div class="week-chip" data-type="todo" data-key="${key}" data-idx="${idx}" style="background:${PRIORITY[t.priority].color}">
+      ...evs.map((e,idx)=>`<div class="week-chip cb-${e.priority}" data-type="event" data-key="${key}" data-idx="${idx}">
+          <span class="wc-title ${e.done?'done':''} ${e.highlight?'highlighted':''}">${e.start} ${e.title}</span></div>`),
+      ...todos.map((t,idx)=>`<div class="week-chip cb-${t.priority}" data-type="todo" data-key="${key}" data-idx="${idx}">
           <span class="wc-check ${t.done?'checked':''}" onclick="event.stopPropagation(); toggleTodo('${key}',${idx})"></span>
-          <span class="wc-title ${t.done?'done':''}">${t.title}</span></div>`)
+          <span class="wc-title ${t.done?'done':''} ${t.highlight?'highlighted':''}">${t.title}</span></div>`)
     ].join('');
     return `<div class="week-col" data-key="${key}">
         <div class="wh ${isToday?'today':''}" onclick="selectDayAndOpen('${key}')">${'일월화수목금토'[d.getDay()]}<span class="n">${d.getDate()}</span></div>
@@ -253,7 +253,7 @@ function renderMonth(){
     const rowCells = cells.slice(r*7,r*7+7).map(c=>{
       const key=keyOf(c.date); const isToday=key===todayKey; const isSelected=key===keyOf(state.cursor)&&!isToday;
       const items=[...(EVENTS[key]||[]),...(TODOS[key]||[])];
-      const dots=items.slice(0,6).map(it=>`<div class="dot" style="background:${PRIORITY[it.priority].color}"></div>`).join('');
+      const dots=items.slice(0,6).map(it=>`<div class="dot pc-${it.priority}"></div>`).join('');
       return `<td class="${c.faded?'faded':''} ${isToday?'today':''} ${isSelected?'selected':''}" onclick="selectDayAndOpen('${key}')"><span class="num">${c.day}</span><div class="dot-row">${dots}</div></td>`;
     }).join('');
     rows.push(`<tr>${rowCells}</tr>`);

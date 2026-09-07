@@ -47,7 +47,9 @@ function shift(delta){
   render();
 }
 function selectDay(key){ state.cursor=new Date(key+"T00:00:00"); state.view="day"; render(); }
-function selectDayAndOpen(key){ selectDay(key); openEventModal(key); }
+/* 주간·월간에서 날짜 탭 시: 일간으로 탭 이동하지 않고 현재 뷰를 유지한 채
+   해당 날짜의 선택/하단 아젠다만 갱신하고 일정 추가 팝업을 연다 */
+function selectDayAndOpen(key){ state.cursor=new Date(key+"T00:00:00"); render(); openEventModal(key); }
 
 function toggleTodo(key, idx){ TODOS[key][idx].done=!TODOS[key][idx].done; render(); }
 function toggleEventDone(key, idx){ EVENTS[key][idx].done=!EVENTS[key][idx].done; render(); }

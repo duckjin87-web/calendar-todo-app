@@ -23,6 +23,13 @@
 <div class="edge-glow left" id="edgeLeft"></div>
 <div class="edge-glow right" id="edgeRight"></div>
 
+<!-- Firebase(선택): firebase-config.js에 값을 채우면 기기 간 동기화가 켜집니다.
+     값을 비워두면 앱은 '이 기기에만 저장'(로컬) 모드로 동작합니다. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+
 <script src="script.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
